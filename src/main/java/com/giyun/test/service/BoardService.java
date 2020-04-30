@@ -15,8 +15,9 @@ public class BoardService {
     @Autowired
     BoardMapper boardMapper;
 
-    public List<BoardDto> findBoard(){
+    public List<BoardDto> findBoard(String keyword){
         Map<String,Object> params = new HashMap<>();
+        if(keyword != null && keyword.length() > 0)    params.put("keyword",keyword);
         return boardMapper.selectBoard(params);
     }
 }
