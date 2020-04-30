@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="boardTable" style="height: 1000px; width: 800px">
+        <table class="table">
+            <thead>
+                <title>자유 게시판</title>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>마지막 업데이트</th>
+                    <th>작성 날짜</th>
+                    <th>조회수</th>
+                </tr>
+                <tr v-for="(content, index) in data">
+                    <td>{{index}}</td>
+                    <td>{{content.title}}</td>
+                    <td>{{content.writer}}</td>
+                    <td>{{content.created_at}}</td>
+                    <td>{{content.updated_at}}</td>
+                    <td>{{content.count}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<script type="text/javascript">
+    var boardVue = new Vue({
+        el:"#boardTable",
+        data : {
+            data : []
+        },
+        methods :{
+
+        },
+        created : function () {
+            console.log("created 실행");
+            axios.get("/board").then( res => {
+                console.log(res);
+                this.data = res.data.data;
+            })
+        }
+    })
+</script>
+</body>
+</html>
