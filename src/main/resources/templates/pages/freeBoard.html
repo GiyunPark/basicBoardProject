@@ -44,32 +44,93 @@
                 </tr>
             </tbody>
         </table>
+        <div class="board-bar">
+            <ul class="pagination pagination-sm">
+                <li class="first">
+                    <a v-on:click="pageSearching(1)">
+                        <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li class="prev">
+                    <a v-on:click="pageSearching(pageInfo.activePage-3)">
+                        <span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li v-for='(num) in pageInfo.pages' v-bind:class="(num == pageInfo.activePage) ? 'active' : ''">
+                    <a v-on:click="pageSearching(num)">{{ num }}</a>
+                </li>
+                <li class="next">
+                    <a v-on:click="pageSearching(pageInfo.activePage+3)">
+                        <span class="glyphicon glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li class="last">
+                    <a v-on:click="pageSearching('last')">
+                        <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
+
   </div>
 <script type="text/javascript">
     var boardVue = new Vue({
         el:"#boardTable",
         data : {
             data : [],
-            keyword : ""
+            keyword : "",
+            start : 0,
+            size : 10,
+            pageInfo : [],
+            total : null
         },
-        methods :{
-            searchBoard : function(){
-                axios.get("/board",{
-                    params:{
-                        keyword : this.keyword
+        methods : {
+            searchBoard: function () {
+                axios.get("/board", {
+                    params: {
+                        keyword: this.keyword
                     }
-                }).then( res =>{
+                }).then(res => {
                     console.log(res);
                     this.data = res.data.data;
                 })
+            }, pageSearching: function (num) {
+                console.log("num"+num)
+                console.log("start"+ this.start)
+                let lastPage;
+                if (this.total % this.size == 0) {
+                    lastPage = Math.floor(this.total / this.size);
+                } else {
+                    lastPage = Math.floor(this.total / this.size + 1);
+                }
+                if (num < 0) {
+                    this.start = 0;
+                } else if (num > lastPage || num == 'last') {
+                    this.start = (lastPage - 1) * this.size;
+                } else {
+                    this.start = (num - 1) * this.size;
+                }
+                axios.get('/board', {
+                    params: {
+                        keyword:this.keyword,
+                        start: this.start,
+                        size: this.size
+                    }
+                }).then(res => {
+                        this.data = res.data.data;
+                        this.pageInfo = res.data.pageInfo;
+                        this.total = res.data.total;
+                    }
+                )
             }
         },
         created : function () {
             console.log("created 실행");
             axios.get("/board").then( res => {
-                console.log(res);
                 this.data = res.data.data;
+                this.pageInfo = res.data.pageInfo;
+                this.total = res.data.total;
             })
         }
     })

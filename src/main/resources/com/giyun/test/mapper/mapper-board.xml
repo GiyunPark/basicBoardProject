@@ -8,5 +8,16 @@
         <if test="keyword != null">
             AND title LIKE '%${keyword}%' OR writer LIKE '%${keyword}%'
         </if>
+        ORDER BY created_at desc
+        LIMIT #{start}, #{size}
+    </select>
+
+    <select id="selectCountBoard" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM board_free
+        WHERE 1 = 1
+        <if test="keyword != null">
+            AND title LIKE '%${keyword}%' OR writer LIKE '%${keyword}%'
+        </if>
     </select>
 </mapper>

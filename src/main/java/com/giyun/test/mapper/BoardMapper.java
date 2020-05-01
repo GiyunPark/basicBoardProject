@@ -13,4 +13,5 @@ import java.util.Map;
 public interface BoardMapper {
 
     public List<BoardDto> selectBoard(Map<String, Object> params);
+    public int selectCountBoard(Map<String, Object> params);
 }
